@@ -96,20 +96,10 @@ func (g *WeightedUndirectedGraph) Edges() graph.Edges {
 
 // From returns all nodes in g that can be reached directly from n.
 func (g *WeightedUndirectedGraph) From(id int64) graph.Nodes {
-	if _, ok := g.nodes[id]; !ok {
+	if len(g.edges[id]) == 0 {
 		return graph.Empty
 	}
-
-	nodes := make([]graph.Node, len(g.edges[id]))
-	i := 0
-	for from := range g.edges[id] {
-		nodes[i] = g.nodes[from]
-		i++
-	}
-	if len(nodes) == 0 {
-		return graph.Empty
-	}
-	return iterator.NewOrderedNodes(nodes)
+	return iterator.NewNodesByWeightedEdge(g.nodes, g.edges[id])
 }
 
 // HasEdgeBetween returns whether an edge exists between nodes x and y.
